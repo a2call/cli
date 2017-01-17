@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/daticahealth/cli/commands/associate"
 	"github.com/daticahealth/cli/commands/associated"
 	"github.com/daticahealth/cli/commands/certs"
@@ -14,7 +15,6 @@ import (
 	"github.com/daticahealth/cli/commands/console"
 	"github.com/daticahealth/cli/commands/dashboard"
 	"github.com/daticahealth/cli/commands/db"
-	"github.com/daticahealth/cli/commands/default"
 	"github.com/daticahealth/cli/commands/deploykeys"
 	"github.com/daticahealth/cli/commands/disassociate"
 	"github.com/daticahealth/cli/commands/domain"
@@ -42,15 +42,11 @@ import (
 	"github.com/daticahealth/cli/commands/version"
 	"github.com/daticahealth/cli/commands/whoami"
 	"github.com/daticahealth/cli/commands/worker"
-
 	"github.com/daticahealth/cli/config"
-	"github.com/daticahealth/cli/models"
-
 	"github.com/daticahealth/cli/lib/httpclient"
 	"github.com/daticahealth/cli/lib/pods"
 	"github.com/daticahealth/cli/lib/updater"
-
-	"github.com/Sirupsen/logrus"
+	"github.com/daticahealth/cli/models"
 	"github.com/jault3/mow.cli"
 )
 
@@ -209,7 +205,6 @@ func InitCLI(app *cli.Cli, settings *models.Settings) {
 	app.CommandLong(console.Cmd.Name, console.Cmd.ShortHelp, console.Cmd.LongHelp, console.Cmd.CmdFunc(settings))
 	app.CommandLong(dashboard.Cmd.Name, dashboard.Cmd.ShortHelp, dashboard.Cmd.LongHelp, dashboard.Cmd.CmdFunc(settings))
 	app.CommandLong(db.Cmd.Name, db.Cmd.ShortHelp, db.Cmd.LongHelp, db.Cmd.CmdFunc(settings))
-	app.CommandLong(defaultcmd.Cmd.Name, defaultcmd.Cmd.ShortHelp, defaultcmd.Cmd.LongHelp, defaultcmd.Cmd.CmdFunc(settings))
 	app.CommandLong(deploykeys.Cmd.Name, deploykeys.Cmd.ShortHelp, deploykeys.Cmd.LongHelp, deploykeys.Cmd.CmdFunc(settings))
 	app.CommandLong(disassociate.Cmd.Name, disassociate.Cmd.ShortHelp, disassociate.Cmd.LongHelp, disassociate.Cmd.CmdFunc(settings))
 	app.CommandLong(domain.Cmd.Name, domain.Cmd.ShortHelp, domain.Cmd.LongHelp, domain.Cmd.CmdFunc(settings))
