@@ -3,10 +3,7 @@ package associate
 import (
 	"github.com/Sirupsen/logrus"
 	"github.com/daticahealth/cli/commands/environments"
-	"github.com/daticahealth/cli/commands/git"
-	"github.com/daticahealth/cli/commands/services"
 	"github.com/daticahealth/cli/lib/auth"
-	"github.com/daticahealth/cli/lib/prompts"
 	"github.com/daticahealth/cli/models"
 	"github.com/jault3/mow.cli"
 )
@@ -21,26 +18,25 @@ var Cmd = models.Command{
 		"```\ndatica associate My-Production-Environment app01 -a prod\n```",
 	CmdFunc: func(settings *models.Settings) func(cmd *cli.Cmd) {
 		return func(cmd *cli.Cmd) {
-			envName := cmd.StringArg("ENV_NAME", "", "The name of your environment")
+			envName := cmd.StringOpt("e environment", "", "The name of your environment")
 			alias := cmd.StringOpt("a alias", "", "A shorter name to reference your environment by for local commands")
-			remote := cmd.StringOpt("r remote", "datica", "The name of the remote")
 			cmd.Action = func() {
 				if _, err := auth.New(settings, prompts.New()).Signin(); err != nil {
 					logrus.Fatal(err.Error())
 				}
-				err := CmdAssociate(*envName, *alias, *remote, New(settings), git.New(), environments.New(settings), services.New(settings))
+				err := CmdAssociate(*envName, *alias, New(settings), environments.New(settings))
 				if err != nil {
 					logrus.Fatal(err.Error())
 				}
 			}
-			cmd.Spec = "ENV_NAME [-a] [-r]"
+			cmd.Spec = "[-e] [-a]"
 		}
 	},
 }
 
 // interfaces are the API calls
 type IAssociate interface {
-	Associate(name, remote string, env *models.Environment) error
+	Associate(alias, envID, envName, pod, orgID string) error
 }
 
 // SAssociate is a concrete implementation of IAssociate

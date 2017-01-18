@@ -13,7 +13,6 @@ import (
 	"github.com/daticahealth/cli/commands/certs"
 	"github.com/daticahealth/cli/commands/clear"
 	"github.com/daticahealth/cli/commands/console"
-	"github.com/daticahealth/cli/commands/dashboard"
 	"github.com/daticahealth/cli/commands/db"
 	"github.com/daticahealth/cli/commands/deploykeys"
 	"github.com/daticahealth/cli/commands/disassociate"
@@ -158,7 +157,12 @@ func InitGlobalOpts(app *cli.Cli, settings *models.Settings) {
 			logrus.Println("This is a BETA release. Please contact Datica Support at https://datica.com/support with any issues.")
 		}
 		r := config.FileSettingsRetriever{}
-		*settings = *r.GetSettings(*givenEnvName, "", accountsHost, authHost, "", paasHost, "", *username, *password)
+		s, err := r.GetSettings(*givenEnvName, "", accountsHost, authHost, "", paasHost, "", *username, *password)
+		if err != nil {
+			logrus.Println(err)
+			cli.Exit(1)
+		}
+		*settings = *s
 		skip, _ := strconv.ParseBool(os.Getenv(config.SkipVerifyEnvVar))
 		settings.HTTPManager = httpclient.NewTLSHTTPManager(skip)
 		logrus.Debugf("%+v", settings)
@@ -173,6 +177,18 @@ func InitGlobalOpts(app *cli.Cli, settings *models.Settings) {
 			} else {
 				settings.Pods = &[]models.Pod{}
 				logrus.Debugf("Error listing pods: %s", err.Error())
+			}
+		}
+
+		if settings.AutoUpdateOptIn == models.AutoUpdateUnspecified {
+			p := prompts.New()
+			choice := p.GenericPrompt("The Catalyze CLI can automatically update itself when a new version becomes available. Please choose how you would like to handle automatic updates to the CLI:\n1. Always update when a new version becomes available\n2. Notify me when a new version becomes available but don't automatically update\n3. Never notify me of new versions", "Enter your choice: ", []string{"1", "2", "3"})
+			if choice == "1" {
+				settings.AutoUpdateOptIn = models.AutoUpdateAlways
+			} else if choice == "2" {
+				settings.AutoUpdateOptIn = models.AutoUpdatePrompt
+			} else if choice == "3" {
+				settings.AutoUpdateOptIn = models.AutoUpdateNever
 			}
 		}
 	}
@@ -203,7 +219,6 @@ func InitCLI(app *cli.Cli, settings *models.Settings) {
 	app.CommandLong(certs.Cmd.Name, certs.Cmd.ShortHelp, certs.Cmd.LongHelp, certs.Cmd.CmdFunc(settings))
 	app.CommandLong(clear.Cmd.Name, clear.Cmd.ShortHelp, clear.Cmd.LongHelp, clear.Cmd.CmdFunc(settings))
 	app.CommandLong(console.Cmd.Name, console.Cmd.ShortHelp, console.Cmd.LongHelp, console.Cmd.CmdFunc(settings))
-	app.CommandLong(dashboard.Cmd.Name, dashboard.Cmd.ShortHelp, dashboard.Cmd.LongHelp, dashboard.Cmd.CmdFunc(settings))
 	app.CommandLong(db.Cmd.Name, db.Cmd.ShortHelp, db.Cmd.LongHelp, db.Cmd.CmdFunc(settings))
 	app.CommandLong(deploykeys.Cmd.Name, deploykeys.Cmd.ShortHelp, deploykeys.Cmd.LongHelp, deploykeys.Cmd.CmdFunc(settings))
 	app.CommandLong(disassociate.Cmd.Name, disassociate.Cmd.ShortHelp, disassociate.Cmd.LongHelp, disassociate.Cmd.CmdFunc(settings))
@@ -226,9 +241,7 @@ func InitCLI(app *cli.Cli, settings *models.Settings) {
 	app.CommandLong(ssl.Cmd.Name, ssl.Cmd.ShortHelp, ssl.Cmd.LongHelp, ssl.Cmd.CmdFunc(settings))
 	app.CommandLong(status.Cmd.Name, status.Cmd.ShortHelp, status.Cmd.LongHelp, status.Cmd.CmdFunc(settings))
 	app.CommandLong(supportids.Cmd.Name, supportids.Cmd.ShortHelp, supportids.Cmd.LongHelp, supportids.Cmd.CmdFunc(settings))
-	if !config.Beta {
-		app.CommandLong(update.Cmd.Name, update.Cmd.ShortHelp, update.Cmd.LongHelp, update.Cmd.CmdFunc(settings))
-	}
+	app.CommandLong(update.Cmd.Name, update.Cmd.ShortHelp, update.Cmd.LongHelp, update.Cmd.CmdFunc(settings))
 	app.CommandLong(users.Cmd.Name, users.Cmd.ShortHelp, users.Cmd.LongHelp, users.Cmd.CmdFunc(settings))
 	app.CommandLong(vars.Cmd.Name, vars.Cmd.ShortHelp, vars.Cmd.LongHelp, vars.Cmd.CmdFunc(settings))
 	app.CommandLong(version.Cmd.Name, version.Cmd.ShortHelp, version.Cmd.LongHelp, version.Cmd.CmdFunc(settings))
