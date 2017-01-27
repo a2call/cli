@@ -36,7 +36,7 @@ func CmdAssociate(envName, alias string, ia IAssociate, ie environments.IEnviron
 			}
 		}
 	}
-	if !found {
+	if envName != "" && !found {
 		return fmt.Errorf("No environment with name \"%s\" found", envName)
 	}
 

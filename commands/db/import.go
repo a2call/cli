@@ -27,7 +27,7 @@ func CmdImport(databaseName, filePath, mongoCollection, mongoDatabase string, sk
 		return err
 	}
 	if service == nil {
-		return fmt.Errorf("Could not find a service with the label \"%s\". You can list services with the \"datica services\" command.", databaseName)
+		return fmt.Errorf("Could not find a service with the label \"%s\". You can list services with the \"datica services list\" command.", databaseName)
 	}
 	key := make([]byte, crypto.KeySize)
 	iv := make([]byte, crypto.IVSize)
