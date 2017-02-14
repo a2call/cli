@@ -16,8 +16,8 @@ var Cmd = models.Command{
 	ShortHelp: "Associates an environment",
 	LongHelp: "`associate` is the entry point of the cli. You need to associate an environment before you can run most other commands. " +
 		"Check out [scope](#global-scope) and [aliases](#environment-aliases) for more info on the value of the alias and default options. Here are some sample commands\n\n" +
-		"```\ncatalyze associate My-Production-Environment -a prod\n" +
-		"catalyze associate\n```",
+		"```\ndatica associate My-Production-Environment -a prod\n" +
+		"datica associate\n```",
 	CmdFunc: func(settings *models.Settings) func(cmd *cli.Cmd) {
 		return func(cmd *cli.Cmd) {
 			envName := cmd.StringArg("ENVIRONMENT", "", "The name of your environment")

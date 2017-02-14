@@ -71,7 +71,7 @@ func (p *SPrompts) PHI() error {
 	acceptAnswers := []string{"y", "yes"}
 	denyAnswers := []string{"n", "no"}
 
-	answer := p.GenericPrompt("This operation might result in PHI data being downloaded and decrypted to your local machine. By entering \"y\" at the prompt below, you warrant that you have the necessary privileges to view the data, have taken all necessary precautions to secure this data, and absolve Catalyze of any issues that might arise from its loss.", "Do you wish to proceed? (y/n) ", append(acceptAnswers, denyAnswers...))
+	answer := p.GenericPrompt("This operation might result in PHI data being downloaded and decrypted to your local machine. By entering \"y\" at the prompt below, you warrant that you have the necessary privileges to view the data, have taken all necessary precautions to secure this data, and absolve Datica of any issues that might arise from its loss.", "Do you wish to proceed? (y/n) ", append(acceptAnswers, denyAnswers...))
 	for _, denyAnswer := range denyAnswers {
 		if denyAnswer == strings.ToLower(answer) {
 			return fmt.Errorf("Exiting")

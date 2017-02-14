@@ -1,8 +1,8 @@
 package test
 
 import (
-	"github.com/catalyzeio/cli/lib/httpclient"
-	"github.com/catalyzeio/cli/models"
+	"github.com/daticahealth/cli/lib/httpclient"
+	"github.com/daticahealth/cli/models"
 	"github.com/daticahealth/cli/test"
 )
 
@@ -187,7 +187,7 @@ var DefaultService = models.Service{
 	},
 	Name:           "code",
 	EnvVars:        map[string]string{},
-	Source:         "git@catalyze-git.com",
+	Source:         "git@datica-git.com",
 	LBIP:           "127.0.0.1",
 	Scale:          1,
 	WorkerScale:    1,

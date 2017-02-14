@@ -120,7 +120,7 @@ func migrateSettings(file *os.File, oldFormat, newFormat string) (models.Setting
 	if oldFormat == "v1" {
 		return migrateFromV1(file)
 	}
-	return models.Settings{}, fmt.Errorf("Invalid or corrupt settings file. Please fix the %s file in your home directory or contact Catalyze support", SettingsFile)
+	return models.Settings{}, fmt.Errorf("Invalid or corrupt settings file. Please fix the %s file in your home directory or contact Datica support", SettingsFile)
 }
 
 func migrateFromV1(file *os.File) (models.Settings, error) {
