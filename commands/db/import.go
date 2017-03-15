@@ -83,7 +83,7 @@ func CmdImport(databaseName, filePath, mongoCollection, mongoDatabase string, sk
 			return fmt.Errorf("Job finished with invalid status %s", job.Status)
 		}
 	} else {
-		err := ip.YesNo("Are you sure you want to import data into your database without backing it up first? (y/n) ")
+		err := ip.YesNo("Are you sure you want to import data into your database without backing it up first?", " (y/n) ")
 		if err != nil {
 			return err
 		}

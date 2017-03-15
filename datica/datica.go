@@ -44,6 +44,7 @@ import (
 	"github.com/daticahealth/cli/config"
 	"github.com/daticahealth/cli/lib/httpclient"
 	"github.com/daticahealth/cli/lib/pods"
+	"github.com/daticahealth/cli/lib/prompts"
 	"github.com/daticahealth/cli/lib/updater"
 	"github.com/daticahealth/cli/models"
 	"github.com/jault3/mow.cli"

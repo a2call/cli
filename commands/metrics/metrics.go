@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/daticahealth/cli/commands/services"
 	"github.com/daticahealth/cli/models"
 )
 
