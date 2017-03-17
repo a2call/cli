@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/daticahealth/cli/commands/services"
 	"github.com/daticahealth/cli/test"
 )
 
@@ -17,18 +18,18 @@ var certRmTests = []struct {
 }
 
 func TestCertsRm(t *testing.T) {
-	setup()
-	defer teardown()
+	mux, server, baseURL := test.Setup()
+	defer test.Teardown(server)
 	settings := test.GetSettings(baseURL.String())
 	mux.HandleFunc("/environments/"+test.EnvID+"/services/"+test.SvcID+"/certs/"+certName,
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "DELETE")
+			test.AssertMethod(t, r, "DELETE")
 			fmt.Fprint(w, "")
 		},
 	)
 	mux.HandleFunc("/environments/"+test.EnvID+"/services",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "GET")
+			test.AssertMethod(t, r, "GET")
 			fmt.Fprint(w, fmt.Sprintf(`[{"id":"%s","label":"service_proxy"}]`, test.SvcID))
 		},
 	)

@@ -18,22 +18,18 @@ var settings = models.Settings{
 	PrivateKeyPath: "",
 	SessionToken:   "1234",
 	UsersID:        "user1234",
-	Environments: map[string]models.AssociatedEnv{
-		"ctest": models.AssociatedEnv{
+	Environments: map[string]models.AssociatedEnvV2{
+		"ctest": models.AssociatedEnvV2{
 			EnvironmentID: "env1234",
-			ServiceID:     "svc1234",
-			Directory:     "/dir",
 			Name:          "test",
 			Pod:           "air-force-pod",
 			OrgID:         "org1234",
 		},
 	},
-	Default: "ctest",
 	Pods: &[]models.Pod{
 		{
-			Name:                 "air-force-pod",
-			PHISafe:              true,
-			ImportRequiresLength: true,
+			Name:    "air-force-pod",
+			PHISafe: true,
 		},
 	},
 	PodCheck: 1478899890,

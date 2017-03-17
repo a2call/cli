@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"os"
 	"testing"
 
@@ -67,29 +65,6 @@ EZ/6B0fi6DsLHY1tkIEvqgGI0kQX6IE84iZSi/Ubh8gQGwtutoZ1Stk=
 	invalidPath = "invalid-file.pem"
 )
 
-var (
-	mux     *http.ServeMux
-	server  *httptest.Server
-	baseURL *url.URL
-)
-
-func setup() {
-	mux = http.NewServeMux()
-	server = httptest.NewServer(mux)
-
-	baseURL, _ = url.Parse(server.URL)
-}
-
-func teardown() {
-	server.Close()
-}
-
-func testMethod(t *testing.T, r *http.Request, want string) {
-	if want != r.Method {
-		t.Errorf("Request method = %v, want %v", r.Method, want)
-	}
-}
-
 func TestMain(m *testing.M) {
 	flag.Parse()
 	if err := createCertFiles(); err != nil {
@@ -118,18 +93,18 @@ var certCreateTests = []struct {
 }
 
 func TestCertsCreate(t *testing.T) {
-	setup()
-	defer teardown()
+	mux, server, baseURL := test.Setup()
+	defer test.Teardown(server)
 	settings := test.GetSettings(baseURL.String())
 	mux.HandleFunc("/environments/"+test.EnvID+"/services/"+test.SvcID+"/certs",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "POST")
+			test.AssertMethod(t, r, "POST")
 			fmt.Fprint(w, `{}`)
 		},
 	)
 	mux.HandleFunc("/environments/"+test.EnvID+"/services",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "GET")
+			test.AssertMethod(t, r, "GET")
 			fmt.Fprint(w, fmt.Sprintf(`[{"id":"%s","label":"service_proxy"}]`, test.SvcID))
 		},
 	)
@@ -149,12 +124,12 @@ func TestCertsCreate(t *testing.T) {
 }
 
 func TestCertsCreateFailSSL(t *testing.T) {
-	setup()
-	defer teardown()
+	mux, server, baseURL := test.Setup()
+	defer test.Teardown(server)
 	settings := test.GetSettings(baseURL.String())
 	mux.HandleFunc("/environments/"+test.EnvID+"/services",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "GET")
+			test.AssertMethod(t, r, "GET")
 			fmt.Fprint(w, fmt.Sprintf(`[{"id":"%s","label":"service_proxy"}]`, test.SvcID))
 		},
 	)

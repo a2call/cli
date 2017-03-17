@@ -10,3 +10,4 @@ build/
 public/
 Godeps/_workspace
 docs/cli-docs.md
+commands/certs/example-key.pem

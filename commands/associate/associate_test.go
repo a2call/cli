@@ -3,8 +3,6 @@ package associate
 import (
 	"fmt"
 	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"reflect"
 	"testing"
 
@@ -12,29 +10,6 @@ import (
 	"github.com/daticahealth/cli/models"
 	"github.com/daticahealth/cli/test"
 )
-
-var (
-	mux     *http.ServeMux
-	server  *httptest.Server
-	baseURL *url.URL
-)
-
-func setup() {
-	mux = http.NewServeMux()
-	server = httptest.NewServer(mux)
-
-	baseURL, _ = url.Parse(server.URL)
-}
-
-func teardown() {
-	server.Close()
-}
-
-func testMethod(t *testing.T, r *http.Request, want string) {
-	if want != r.Method {
-		t.Errorf("Request method = %v, want %v", r.Method, want)
-	}
-}
 
 var associateTests = []struct {
 	envName   string
@@ -49,13 +24,13 @@ var associateTests = []struct {
 }
 
 func TestAssociate(t *testing.T) {
-	setup()
-	defer teardown()
+	mux, server, baseURL := test.Setup()
+	defer test.Teardown(server)
 	settings := test.GetSettings(baseURL.String())
 
 	mux.HandleFunc("/environments",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "GET")
+			test.AssertMethod(t, r, "GET")
 			if r.Header.Get("X-Pod-ID") == test.Pod {
 				fmt.Fprint(w, fmt.Sprintf(`[{"id":"%s","name":"%s","namespace":"%s","organizationId":"%s"}]`, test.EnvID, test.EnvName, test.Namespace, test.OrgID))
 			} else {
@@ -106,14 +81,14 @@ func TestAssociate(t *testing.T) {
 }
 
 func TestAssociateWithPodErrors(t *testing.T) {
-	setup()
-	defer teardown()
+	mux, server, baseURL := test.Setup()
+	defer test.Teardown(server)
 	settings := test.GetSettings(baseURL.String())
 	settings.Environments = map[string]models.AssociatedEnvV2{}
 
 	mux.HandleFunc("/environments",
 		func(w http.ResponseWriter, r *http.Request) {
-			testMethod(t, r, "GET")
+			test.AssertMethod(t, r, "GET")
 			http.Error(w, `{"title":"Error","description":"error","code":1}`, 400)
 		},
 	)
